@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Give Me Back Ctrl+F",
+  "version": "1.0.0",
+  "description": "Intercepts Ctrl+F keyboard shortcuts",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "permissions": []
+}
