@@ -1,0 +1,36 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate version
+        run: |
+          TAG_VERSION=${GITHUB_REF#refs/tags/v}
+          MANIFEST_VERSION=$(jq -r '.version' manifest.json)
+          if [ "$TAG_VERSION" != "$MANIFEST_VERSION" ]; then
+            echo "Tag version ($TAG_VERSION) does not match manifest version ($MANIFEST_VERSION)"
+            exit 1
+          fi
+
+      - name: Package extension
+        run: |
+          zip -r give-me-back-ctrl-f.zip manifest.json content.js
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: give-me-back-ctrl-f.zip
+          generate_release_notes: true
